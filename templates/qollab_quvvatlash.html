@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}Qo'llab-quvvatlash - NovaMc.uz{% endblock %}
+
+{% block extra_css %}
+<style>
+    .support-wrapper {
+        max-width: 1000px;
+        margin: 40px auto;
+    }
+    .support-hero {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .support-hero h1 {
+        font-size: 42px;
+        color: var(--secondary);
+        margin-bottom: 10px;
+    }
+    .support-hero p {
+        color: var(--text-muted);
+        font-size: 18px;
+    }
+
+    /* Grid of Quick Support Cards */
+    .support-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        margin-bottom: 50px;
+    }
+    .support-card {
+        background: var(--bg-card);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 30px;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    }
+    .support-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: var(--primary);
+        box-shadow: 0 20px 40px rgba(155, 81, 224, 0.4);
+    }
+    .support-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(155, 81, 224, 0.15);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        color: var(--secondary);
+        border: 1px solid rgba(3, 218, 198, 0.3);
+    }
+    .support-card h3 {
+        font-size: 20px;
+        color: var(--text-main);
+        margin-bottom: 10px;
+    }
+    .support-card p {
+        color: var(--text-muted);
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    /* FAQ Accordion Section */
+    .faq-section {
+        background: var(--bg-card);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+    .faq-section h2 {
+        color: var(--primary-hover);
+        font-size: 28px;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .faq-item {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+    }
+    .faq-question {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-main);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        transition: color 0.3s;
+    }
+    .faq-question:hover {
+        color: var(--secondary);
+    }
+    .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease, opacity 0.4s ease;
+        opacity: 0;
+        color: var(--text-muted);
+        font-size: 15px;
+        line-height: 1.6;
+        padding-top: 5px;
+    }
+    .faq-item.active .faq-answer {
+        max-height: 200px;
+        opacity: 1;
+    }
+    .faq-toggle-icon {
+        font-size: 22px;
+        transition: transform 0.3s ease;
+        color: var(--primary);
+    }
+    .faq-item.active .faq-toggle-icon {
+        transform: rotate(45deg);
+        color: var(--secondary);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="subpage-3d-header">
+    <div id="subpage-3d-container" class="subpage-3d-container" data-3d-type="support"></div>
+</div>
+
+<div class="support-wrapper">
+    <div class="support-hero">
+        <h1>QO'LLAB-QUVVATLASH MARKAZI</h1>
+        <p>Savollaringiz bormi yoki muammoga duch keldingizmi? Biz sizga yordam berishga tayyormiz!</p>
+    </div>
+
+    <!-- Quick Contact Cards -->
+    <div class="support-cards-grid">
+        <div class="support-card info-card">
+            <div class="support-icon">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            </div>
+            <h3>Telegram Yordam</h3>
+            <p>Adminlarimiz va qo'llab-quvvatlash xizmati bilan to'g'ridan-to'g'ri bog'laning.</p>
+            <a href="https://t.me/NovaMc_org" target="_blank" class="btn btn-primary" style="justify-content: center;">Telegram'ga yozish</a>
+        </div>
+
+        <div class="support-card info-card">
+            <div class="support-icon">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            </div>
+            <h3>Discord Jamiyati</h3>
+            <p>Discord serverimizda ticket oching va o'yinchilar hamda moderatorlar bilan muloqot qiling.</p>
+            <a href="https://discord.gg/yswhhQKdB" target="_blank" class="btn btn-primary" style="justify-content: center; background: linear-gradient(135deg, #5865F2, #4752C4);">Discord Server</a>
+        </div>
+
+        <div class="support-card info-card">
+            <div class="support-icon">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+            </div>
+            <h3>To'lov Muammosi?</h3>
+            <p>Donat yoki privilegiya berilmadimi? To'lov chekini adminimizga taqdim eting va darhol yordam oling.</p>
+            <a href="https://t.me/NovaMc_org" target="_blank" class="btn btn-primary" style="justify-content: center;">Chekni Tekshirish</a>
+        </div>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div class="faq-section info-card">
+        <h2>KO'P BERILADIGAN SAVOLLAR (FAQ)</h2>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                <span>1. To'lov qildim, privilegiya qachon beriladi?</span>
+                <span class="faq-toggle-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                To'lov chekingiz admin panelida tekshirilgach, privilegiyangiz o'rtacha 5-15 daqiqa ichida o'yindagi nikingizga avtomatik biriktiriladi. Agar kechiksa, Telegram adminimizga murojaat qiling.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                <span>2. Serverga qanday ulanish mumkin?</span>
+                <span class="faq-toggle-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                Minecraft o'yinining 1.16.5 - 1.20+ versiyasidan kiring. Server IP: <strong>{{ site_settings.server_ip }}</strong> nini "Multiplayer -> Add Server" bo'limiga kiriting.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                <span>3. Parolimni unutib qo'ydim, nima qilishim kerak?</span>
+                <span class="faq-toggle-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                Parolni tiklash uchun Telegram adminimiz <strong>@NovaMc_org</strong> ga serverdagi nikingiz va ro'yxatdan o'tgan ma'lumotlaringizni yuboring.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                <span>4. Qoidalarni buzgan o'yinchini qanday xabar qilish mumkin?</span>
+                <span class="faq-toggle-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                Discord serverimizdagi #reports kanalida skrinshot yoki video dalil bilan xabar qoldiring. Moderatorlarimiz tezda ko'rib chiqishadi.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleFaq(element) {
+        const item = element.parentElement;
+        item.classList.toggle('active');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.VanillaTilt) {
+            VanillaTilt.init(document.querySelectorAll(".info-card"), {
+                max: 5, speed: 400, glare: true, "max-glare": 0.15,
+            });
+        }
+    });
+</script>
+{% endblock %}

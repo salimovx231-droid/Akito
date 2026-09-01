@@ -1,0 +1,340 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NovaMc.uz - O'zbekistondagi Eng Zo'r Minecraft Server{% endblock %}</title>
+    <link rel="icon" href="{% static 'img/logo.png' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <!-- Site Loader (mirrors the portfolio's boot-progress overlay) -->
+    <noscript><style>#siteLoader{display:none !important;}</style></noscript>
+    <div id="siteLoader" class="site-loader" aria-hidden="true">
+        <img src="{% static 'img/logo.png' %}" alt="" class="site-loader-logo">
+        <div class="site-loader-track">
+            <div class="site-loader-fill" id="loaderFill"></div>
+        </div>
+        <p class="site-loader-pct" id="loaderPct">0%</p>
+    </div>
+    <script>
+        (function () {
+            var loader = document.getElementById('siteLoader');
+            if (!loader) return;
+            var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (reduceMotion) {
+                loader.style.display = 'none';
+                return;
+            }
+            var fill = document.getElementById('loaderFill');
+            var pct = document.getElementById('loaderPct');
+            var start = performance.now();
+
+            function finish() {
+                setTimeout(function () {
+                    if (window.gsap) {
+                        gsap.to(loader, {
+                            opacity: 0, duration: 0.6, ease: 'power2.inOut',
+                            onComplete: function () { loader.style.display = 'none'; }
+                        });
+                    } else {
+                        loader.style.transition = 'opacity 0.5s ease';
+                        loader.style.opacity = '0';
+                        setTimeout(function () { loader.style.display = 'none'; }, 500);
+                    }
+                }, 400);
+            }
+
+            function tick(now) {
+                var elapsed = now - start;
+                var p = Math.min(100, (elapsed / 1100) * 100);
+                if (fill) fill.style.width = p + '%';
+                if (pct) pct.textContent = Math.round(p) + '%';
+                if (p < 100) requestAnimationFrame(tick);
+                else finish();
+            }
+            requestAnimationFrame(tick);
+        })();
+    </script>
+
+    <div class="background"></div>
+    <canvas id="bg-3d-canvas" class="bg-3d-canvas"></canvas>
+
+    <div class="container">
+        <header>
+            <a href="{% url 'home' %}" class="logo">
+                <img src="{% static 'img/logo.png' %}" alt="NovaMC Logo" class="brand-logo-img">
+                <span class="logo-text">Nova<span>Mc</span></span>
+            </a>
+
+            <!-- Mobile Hamburger Toggle (3ta chiziq) -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="Menyu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav id="navMenu">
+                <ul>
+                    <li><a href="{% url 'home' %}" class="{% if page == 'home' %}active{% endif %}">Bosh sahifa</a></li>
+                    <li><a href="{% url 'qoidalar' %}" class="{% if page == 'qoidalar' %}active{% endif %}">Qoidalar</a></li>
+                    <li><a href="{% url 'qanday' %}" class="{% if page == 'qanday' %}active{% endif %}">Qanday sotib olinadi</a></li>
+                    <li><a href="{% url 'support' %}" class="{% if page == 'support' %}active{% endif %}">Qo'llab-quvvatlash</a></li>
+                    <li><a href="https://t.me/NovaMc_org" target="_blank" class="nav-social-btn tg"><svg width="18"
+                                height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .54-1.43.53-.47-.01-1.37-.26-2.05-.48-.83-.27-1.49-.42-1.43-.88.03-.24.36-.49.98-.75 3.84-1.67 6.41-2.77 7.7-3.3 3.66-1.51 4.42-1.77 4.92-1.78.11 0 .35.03.5.16.13.13.17.31.18.43 0 .04.01.12 0 .21z" />
+                            </svg> Telegram</a></li>
+                    <li><a href="https://discord.gg/yswhhQKdB" target="_blank" class="nav-social-btn discord"><svg
+                                width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+                            </svg> Discord</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <a href="#" class="btn btn-primary" onclick="showIpModal(event)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    O'ynashni boshlash
+                </a>
+            </div>
+        </header>
+
+        {% block content %}{% endblock %}
+
+        <footer>
+            <p>&copy; 2026 NovaMc.uz. Barcha huquqlar himoyalangan.</p>
+            <div class="creator-credits">
+                Sayt yaratuvchisi: <span class="zero-dev-badge">Zero_dev</span>
+            </div>
+            <div class="footer-links">
+                <a href="https://t.me/NovaMc_org" target="_blank">Telegram Kanal</a>
+                <a href="https://discord.gg/yswhhQKdB" target="_blank">Discord Server</a>
+                <a href="{% url 'qoidalar' %}">Qoidalar</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Live Chat Widget (Floating Button & Online Chat Modal) -->
+    <div class="chat-widget-container">
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <div class="chat-admin-info">
+                    <img src="{% static 'img/logo.png' %}" alt="NovaMc Support" class="chat-avatar-img">
+                    <div>
+                        <div class="chat-title">NovaMc Support Chat</div>
+                        <div class="chat-status"><span class="chat-status-dot"></span> Adminlar tarmog'da</div>
+                    </div>
+                </div>
+                <button class="chat-close-btn" onclick="toggleChatWindow()">✕</button>
+            </div>
+            <div class="chat-body" id="chatBody" data-lenis-prevent>
+                <div class="chat-msg bot-msg">
+                    <div class="msg-bubble">
+                        Salom! NovaMc.uz onlayn yordam xizmatiga xush kelibsiz. Qanday yordam bera olaman? 😊
+                    </div>
+                </div>
+                <div class="quick-chips">
+                    <button onclick="sendQuickMsg('IP manzil nima?')">🎮 Server IP</button>
+                    <button onclick="sendQuickMsg('Donat haqida')">💎 Donat</button>
+                    <button onclick="sendQuickMsg('Admin bilan bog\'lanish')">💬 Live Admin</button>
+                </div>
+            </div>
+            <div class="chat-footer">
+                <input type="text" id="chatInput" placeholder="Xabaringizni yozing..." onkeypress="handleChatKeyPress(event)">
+                <button class="chat-send-btn" onclick="sendChatMessage()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+            </div>
+        </div>
+
+        <button class="chat-floating-btn" id="chatFloatingBtn" onclick="toggleChatWindow()">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            <span class="chat-unread-badge">1</span>
+        </button>
+    </div>
+
+    <!-- 3D Engine & Animation Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="{% static 'js/three_scene.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script>
+        function copyIP() {
+            navigator.clipboard.writeText('{{ site_settings.server_ip }}').then(() => {
+                alert("IP manzil nusxalandi: {{ site_settings.server_ip }}");
+            });
+        }
+
+        function showIpModal(e) {
+            e.preventDefault();
+            const modal = document.getElementById('ipModal');
+            if (modal) modal.classList.add('active');
+        }
+
+        function closeIpModal() {
+            const modal = document.getElementById('ipModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        function toggleMobileMenu() {
+            const btn = document.getElementById('mobileMenuBtn');
+            const nav = document.getElementById('navMenu');
+            btn.classList.toggle('active');
+            nav.classList.toggle('active');
+        }
+
+        function toggleChatWindow() {
+            const chatWin = document.getElementById('chatWindow');
+            const badge = document.querySelector('.chat-unread-badge');
+            chatWin.classList.toggle('active');
+            if (badge && chatWin.classList.contains('active')) {
+                badge.style.display = 'none';
+            }
+        }
+
+        function handleChatKeyPress(e) {
+            if (e.key === 'Enter') sendChatMessage();
+        }
+
+        function getChatSessionId() {
+            let sid = localStorage.getItem('nova_chat_session_id');
+            if (!sid) {
+                sid = 'session_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+                localStorage.setItem('nova_chat_session_id', sid);
+            }
+            return sid;
+        }
+
+        const loadedMessageIds = new Set();
+
+        async function syncChatMessages() {
+            const sid = getChatSessionId();
+            try {
+                const res = await fetch(`/api/chat/messages/?session_id=${sid}`);
+                if (!res.ok) return;
+                const messages = await res.json();
+
+                messages.forEach(msg => {
+                    if (!loadedMessageIds.has(msg.id)) {
+                        loadedMessageIds.add(msg.id);
+                        const msgType = msg.sender === 'admin' ? 'bot-msg admin-reply' : 'user-msg';
+                        const timeStr = msg.created_at_formatted ? `<span class="msg-time" style="font-size: 11px; opacity: 0.7; display: block; margin-top: 3px;">${msg.created_at_formatted}</span>` : '';
+                        const msgText = msg.sender === 'admin'
+                            ? `<strong style="color: #00e676; display: block; margin-bottom: 2px;">🔰 Admin Javobi:</strong> ${msg.message} ${timeStr}`
+                            : `${msg.message} ${timeStr}`;
+
+                        appendMsgRaw(msgText, msgType);
+
+                        if (msg.sender === 'admin') {
+                            const badge = document.querySelector('.chat-unread-badge');
+                            const chatWin = document.getElementById('chatWindow');
+                            if (badge && !chatWin.classList.contains('active')) {
+                                badge.style.display = 'flex';
+                                badge.innerText = '!';
+                            }
+                        }
+                    }
+                });
+            } catch (err) {
+                console.error("Chat sync error:", err);
+            }
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const sid = getChatSessionId();
+            input.value = '';
+
+            try {
+                const res = await fetch('/api/chat/send/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_id: sid,
+                        message: text,
+                        user_nick: 'Mehmon'
+                    })
+                });
+                if (res.ok) {
+                    syncChatMessages();
+                } else {
+                    appendMsgRaw(text, 'user-msg');
+                }
+            } catch (e) {
+                appendMsgRaw(text, 'user-msg');
+            }
+        }
+
+        function sendQuickMsg(text) {
+            document.getElementById('chatInput').value = text;
+            sendChatMessage();
+        }
+
+        function appendMsgRaw(htmlContent, type) {
+            const body = document.getElementById('chatBody');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-msg ${type}`;
+            msgDiv.innerHTML = `<div class="msg-bubble">${htmlContent}</div>`;
+            body.appendChild(msgDiv);
+            body.scrollTop = body.scrollHeight;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('ipModal');
+            if (modal) {
+                modal.addEventListener('click', function (e) {
+                    if (e.target === this) closeIpModal();
+                });
+            }
+
+            syncChatMessages();
+            setInterval(syncChatMessages, 3000);
+        });
+    </script>
+
+    <!-- IP Modal -->
+    <div class="modal-overlay" id="ipModal">
+        <div class="modal-content" data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-glare
+            data-tilt-max-glare="0.2">
+            <button class="modal-close" onclick="closeIpModal()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <h2 class="modal-title">O'yinni boshlash!</h2>
+            <p style="color: var(--text-muted); margin-bottom: 15px;">Serverga kirish uchun quyidagi IP manzilni
+                nusxalang:</p>
+            <div class="modal-ip" onclick="copyIP()">{{ site_settings.server_ip }}</div>
+            <p style="color: #00e676; font-size: 14px; font-weight: 600;">Server versiyasi: {{
+                site_settings.server_version }}</p>
+        </div>
+    </div>
+
+    {% block extra_js %}{% endblock %}
+
+    <!-- Premium Animation Layer (GSAP + ScrollTrigger + Lenis smooth scroll) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.6/dist/lenis.min.js"></script>
+    <script src="{% static 'js/animations.js' %}"></script>
+
+    <!-- Extra Animation Layer #2 (particles + custom cursor + confetti + page transitions) -->
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script src="{% static 'js/extra-animations.js' %}"></script>
+</body>
+
+</html>

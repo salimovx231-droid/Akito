@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Qoidalar - NovaMc.uz{% endblock %}
+
+{% block extra_css %}
+<style>
+    .rules-container {
+        max-width: 900px;
+        margin: 40px auto;
+        background: var(--bg-card);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+    .rules-section {
+        margin-bottom: 40px;
+    }
+    .rules-section h2 {
+        color: var(--primary-hover);
+        margin-bottom: 15px;
+        font-size: 24px;
+        border-bottom: 2px solid var(--primary);
+        padding-bottom: 5px;
+        display: inline-block;
+    }
+    .rule-item {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    .rule-id {
+        color: var(--secondary);
+        font-weight: bold;
+        min-width: 40px;
+    }
+    .rule-text {
+        color: var(--text-main);
+    }
+    .rule-punishment {
+        color: #ff5252;
+        font-weight: 600;
+        display: block;
+        margin-top: 2px;
+        font-size: 14px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="subpage-3d-header">
+    <div id="subpage-3d-container" class="subpage-3d-container" data-3d-type="shield"></div>
+</div>
+
+<section class="rules-container info-card">
+    <h1 style="text-align: center; margin-bottom: 40px; font-size: 36px; color: var(--secondary);">SERVER QOIDALARI</h1>
+
+    <!-- 1. ASOSIY QOIDALAR -->
+    <div class="rules-section">
+        <h2>1. ASOSIY QOIDALARI</h2>
+        <div class="rule-item"><span class="rule-id">1.1.</span><div class="rule-text">Barcha o'yinchilar teng huquqli.</div></div>
+        <div class="rule-item"><span class="rule-id">1.2.</span><div class="rule-text">Chit, x-ray qat'iyan man etiladi. <span class="rule-punishment">Jazo: 30 kun ban</span></div></div>
+        <div class="rule-item"><span class="rule-id">1.3.</span><div class="rule-text">Lag, dupe yoki bug ishlatish. <span class="rule-punishment">Jazo: cheksiz ban</span></div></div>
+        <div class="rule-item"><span class="rule-id">1.4.</span><div class="rule-text">Admin so'zini inkor etish. <span class="rule-punishment">Jazo: 3 kun ban</span></div></div>
+        <div class="rule-item"><span class="rule-id">1.5.</span><div class="rule-text">Qoida bilmaslik javobgarlikdan ozod qilmaydi.</div></div>
+        <div class="rule-item"><span class="rule-id">1.6.</span><div class="rule-text">PvP paytida /spawn, /home, /tpa orqali qochish mumkin.</div></div>
+        <div class="rule-item"><span class="rule-id">1.7.</span><div class="rule-text">Ruhiy/moddiy zarar yetkazish. <span class="rule-punishment">Jazo: 1 kun ban</span></div></div>
+        <div class="rule-item"><span class="rule-id">1.8.</span><div class="rule-text">Tartib, adolat va hurmat saqlanishi shart.</div></div>
+        <div class="rule-item"><span class="rule-id">1.9.</span><div class="rule-text">Server fayliga zarar yetkazish. <span class="rule-punishment">Jazo: cheksiz ban</span></div></div>
+        <div class="rule-item"><span class="rule-id">1.10.</span><div class="rule-text">Admin qarori yakuniy.</div></div>
+    </div>
+
+    <!-- 2. CHAT QOIDALARI -->
+    <div class="rules-section">
+        <h2>2. CHAT QOIDALARI</h2>
+        <div class="rule-item"><span class="rule-id">2.1.</span><div class="rule-text">So'kinish, haqorat, diniy/milliy kamsitish. <span class="rule-punishment">Jazo: 5 soat mute yoki ban</span></div></div>
+        <div class="rule-item"><span class="rule-id">2.2.</span><div class="rule-text">Spam, flood, CAPS. <span class="rule-punishment">Jazo: 2 soat mute</span></div></div>
+        <div class="rule-item"><span class="rule-id">2.3.</span><div class="rule-text">Reklama, link, IP yoki server nomi. <span class="rule-punishment">Jazo: cheksiz ban</span></div></div>
+        <div class="rule-item"><span class="rule-id">2.4.</span><div class="rule-text">Adminni haqoratlash. <span class="rule-punishment">Jazo: 10 kun ban yoki mute</span></div></div>
+        <div class="rule-item"><span class="rule-id">2.5.</span><div class="rule-text">Shaxsiy ma'lumot so'rash yoki tarqatish man etiladi.</div></div>
+        <div class="rule-item"><span class="rule-id">2.6.</span><div class="rule-text">Oila a'zolaridan so'kinish. <span class="rule-punishment">Jazo: 3 kun ban</span></div></div>
+        <div class="rule-item"><span class="rule-id">2.7.</span><div class="rule-text">Chatda faqat madaniyatli muloqotga ruxsat.</div></div>
+    </div>
+
+    <!-- 3. O'YIN QOIDALARI -->
+    <div class="rules-section">
+        <h2>3. O'YIN QOIDALARI</h2>
+        <div class="rule-item"><span class="rule-id">3.1.</span><div class="rule-text">Jamoa 3 kishidan ko'p PvP qilsa. <span class="rule-punishment">Jazo: 5 kun ban</span></div></div>
+        <div class="rule-item"><span class="rule-id">3.2.</span><div class="rule-text">Bug, lag, dupe orqali foyda olish. <span class="rule-punishment">Jazo: cheksiz ban</span></div></div>
+        <div class="rule-item"><span class="rule-id">3.3.</span><div class="rule-text">Teleport trap man etilmagan.</div></div>
+        <div class="rule-item"><span class="rule-id">3.4.</span><div class="rule-text">Lag keltiruvchi qurilma yasash. <span class="rule-punishment">Jazo: ban</span></div></div>
+        <div class="rule-item"><span class="rule-id">3.5.</span><div class="rule-text">Eventlarda tartibni buzish. <span class="rule-punishment">Jazo: ban</span></div></div>
+        <div class="rule-item"><span class="rule-id">3.6.</span><div class="rule-text">Aldab savdo qilish. <span class="rule-punishment">Izoh: Server javobgar emas.</span></div></div>
+    </div>
+
+    <!-- 5. TEKSHIRUV QOIDALARI -->
+    <div class="rules-section">
+        <h2>5. TEKSHIRUV QOIDALARI</h2>
+        <div class="rule-item"><span class="rule-id">5.1.</span><div class="rule-text">Moderator sizni tekshiruvga chaqiradi.</div></div>
+        <div class="rule-item"><span class="rule-id">5.2.</span><div class="rule-text">Tekshiruvdan qochish. <span class="rule-punishment">Jazo: 30 kun ban</span></div></div>
+        <div class="rule-item"><span class="rule-id">5.3.</span><div class="rule-text">Fayl yoki client yashirish. <span class="rule-punishment">Jazo: 35 kun ban</span></div></div>
+        <div class="rule-item"><span class="rule-id">5.4.</span><div class="rule-text">RustDesk yoki AnyDesk orqali ruxsat berish shart.</div></div>
+        <div class="rule-item"><span class="rule-id">5.5.</span><div class="rule-text">Dalil topilsa. <span class="rule-punishment">Jazo: 30 kun ban</span></div></div>
+        <div class="rule-item"><span class="rule-id">5.6.</span><div class="rule-text">Qochgan o'yinchi cheater ro'yxatiga kiritiladi.</div></div>
+        <div class="rule-item"><span class="rule-id">5.7.</span><div class="rule-text">Moderatorga bosim yoki tahdid. <span class="rule-punishment">Jazo: cheksiz ban</span></div></div>
+        <div class="rule-item"><span class="rule-id">5.8.</span><div class="rule-text">Toza o'yinchi tiklanadi.</div></div>
+        <div class="rule-item"><span class="rule-id">5.9.</span><div class="rule-text">Tekshiruv faqat moderator ruxsati bilan o'tkaziladi.</div></div>
+    </div>
+
+    <!-- 6. DONAT QOIDALARI -->
+    <div class="rules-section">
+        <h2>6. DONAT QOIDALARI</h2>
+        <div class="rule-item"><span class="rule-id">6.1.</span><div class="rule-text">Donat to'lovlari qaytarilmaydi.</div></div>
+        <div class="rule-item"><span class="rule-id">6.2.</span><div class="rule-text">Donatni sotish, berish yoki o'tkazish. <span class="rule-punishment">Jazo: ban</span></div></div>
+        <div class="rule-item"><span class="rule-id">6.3.</span><div class="rule-text">Donater ham barcha qoidalarga bo'ysunadi.</div></div>
+    </div>
+</section>
+{% endblock %}
