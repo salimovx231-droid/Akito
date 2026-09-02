@@ -7,13 +7,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}NovaMc.uz - O'zbekistondagi Eng Zo'r Minecraft Server{% endblock %}</title>
     <link rel="icon" href="{% static 'img/logo.png' %}">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=3">
     {% block extra_css %}{% endblock %}
 </head>
 
 <body>
-    <!-- Site Loader (mirrors the portfolio's boot-progress overlay) -->
+    <!-- Site Loader -->
     <noscript><style>#siteLoader{display:none !important;}</style></noscript>
+
+    <!-- Ambient Aura Glow Spheres -->
+    <div class="ambient-aura ambient-aura-1"></div>
+    <div class="ambient-aura ambient-aura-2"></div>
+    <div class="ambient-aura ambient-aura-3"></div>
+    <div id="novaToast" class="nova-toast"></div>
+
     <div id="siteLoader" class="site-loader" aria-hidden="true">
         <img src="{% static 'img/logo.png' %}" alt="" class="site-loader-logo">
         <div class="site-loader-track">
@@ -81,6 +88,7 @@
             <nav id="navMenu">
                 <ul>
                     <li><a href="{% url 'home' %}" class="{% if page == 'home' %}active{% endif %}">Bosh sahifa</a></li>
+                    <li><a href="/#shop-section" style="color: var(--gold); text-shadow: 0 0 10px rgba(255, 190, 11, 0.4);">💎 Donat Do'koni</a></li>
                     <li><a href="{% url 'qoidalar' %}" class="{% if page == 'qoidalar' %}active{% endif %}">Qoidalar</a></li>
                     <li><a href="{% url 'qanday' %}" class="{% if page == 'qanday' %}active{% endif %}">Qanday sotib olinadi</a></li>
                     <li><a href="{% url 'support' %}" class="{% if page == 'support' %}active{% endif %}">Qo'llab-quvvatlash</a></li>
@@ -167,9 +175,25 @@
     <script src="{% static 'js/three_scene.js' %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
     <script>
+        function showToast(msg) {
+            let toast = document.getElementById('novaToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'novaToast';
+                toast.className = 'nova-toast';
+                document.body.appendChild(toast);
+            }
+            toast.innerText = msg;
+            toast.classList.add('active');
+            setTimeout(() => toast.classList.remove('active'), 3200);
+        }
+
         function copyIP() {
-            navigator.clipboard.writeText('{{ site_settings.server_ip }}').then(() => {
-                alert("IP manzil nusxalandi: {{ site_settings.server_ip }}");
+            const ip = '{{ site_settings.server_ip }}' || 'mc.novamc.uz';
+            navigator.clipboard.writeText(ip).then(() => {
+                showToast("⚡ IP nusxalandi: " + ip);
+            }).catch(() => {
+                showToast("⚡ IP: " + ip);
             });
         }
 

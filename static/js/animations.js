@@ -23,18 +23,16 @@
         (identical config/easing to the source useLenis hook)
   ------------------------------------------------------- */
   var lenis = null;
-  if (typeof Lenis !== 'undefined' && !reduceMotion) {
+  if (typeof Lenis !== 'undefined' && !reduceMotion && !isTouch) {
     lenis = new Lenis({
-      duration: 1.1,
+      duration: 0.6,
       easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
       smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 1.2
+      wheelMultiplier: 1.25,
+      touchMultiplier: 1.5
     });
 
     gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
-    gsap.ticker.lagSmoothing(0);
-
     if (hasST) lenis.on('scroll', ScrollTrigger.update);
   }
 
@@ -100,105 +98,22 @@
         (source: opacity 0->1, y 40->0, duration 1, power3.out,
         start 'top 85%', toggleActions 'play none none reverse')
   ------------------------------------------------------- */
-  function sectionReveal(selector, y) {
-    if (!hasST || reduceMotion) return;
-    gsap.utils.toArray(selector).forEach(function (el) {
-      if (el.closest('.hero')) return;
-      gsap.fromTo(
-        el,
-        { opacity: 0, y: y || 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none reverse' }
-        }
-      );
-    });
-  }
-
-  // Section-level blocks (matches SectionReveal usage around section intros)
-  sectionReveal('.shop .tabs', 30);
-  sectionReveal('.support-hero', 30);
-  sectionReveal('.faq-section', 40);
-  sectionReveal('.rules-section', 30);
-
-  // List-style repeating entries (matches Timeline's per-item y:30 reveal)
-  gsap.utils.toArray('.rule-item, .faq-item').forEach(function (el, i) {
-    if (!hasST || reduceMotion) return;
-    gsap.fromTo(
-      el,
-      { opacity: 0, y: 30 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        ease: 'power3.out',
-        delay: (i % 6) * 0.04,
-        scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none reverse' }
-      }
-    );
-  });
-
   /* -------------------------------------------------------
-     4. ProjectCard-style alternating slide-in
-        (source: x ±120, opacity 0->1, duration 1, power3.out,
-        start 'top 85%' — applied to the homepage's two feature
-        blocks, the most "showcase" elements on the page)
+     3. Section & Card reveals (Clean render, no ST opacity trapping)
   ------------------------------------------------------- */
-  if (hasST && !reduceMotion) {
-    var buyCard = document.querySelector('.buy-card');
-    var infoCard = document.querySelector('.info-card:not(.guide-container):not(.rules-container):not(.faq-section):not(.support-card)');
-    [
-      [buyCard, -100],
-      [infoCard, 100]
-    ].forEach(function (pair) {
-      var el = pair[0], fromX = pair[1];
-      if (!el) return;
-      gsap.fromTo(
-        el,
-        { x: fromX, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          duration: 1,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none reverse' }
-        }
-      );
-    });
-  }
 
   /* -------------------------------------------------------
-     5. SkillCard-style alternating flip-in (grid of small cards)
-        (source: rotateY ±70, opacity 0->1, y 30->0, duration 0.9,
-        power3.out, start 'top 90%'; hover rotateY10/rotateX-6/scale1.04)
+     5. SkillCard-style hover effect for support cards
   ------------------------------------------------------- */
   if (hasST) {
-    gsap.utils.toArray('.support-card').forEach(function (el, i) {
-      if (!reduceMotion) {
-        el.style.perspective = '800px';
-        gsap.fromTo(
-          el,
-          { rotateY: i % 2 === 0 ? -60 : 60, opacity: 0, y: 20 },
-          {
-            rotateY: 0,
-            opacity: 1,
-            y: 0,
-            duration: 0.9,
-            ease: 'power3.out',
-            scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none reverse' }
-          }
-        );
-      }
+    gsap.utils.toArray('.support-card').forEach(function (el) {
       if (!isTouch && !reduceMotion) {
         el.style.transformStyle = 'preserve-3d';
         el.addEventListener('mouseenter', function () {
-          gsap.to(el, { rotateY: 8, rotateX: -5, duration: 0.4, ease: 'power2.out' });
+          gsap.to(el, { rotateY: 6, rotateX: -4, duration: 0.3, ease: 'power2.out' });
         });
         el.addEventListener('mouseleave', function () {
-          gsap.to(el, { rotateY: 0, rotateX: 0, duration: 0.5, ease: 'power2.out' });
+          gsap.to(el, { rotateY: 0, rotateX: 0, duration: 0.4, ease: 'power2.out' });
         });
       }
     });

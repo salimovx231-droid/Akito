@@ -5,20 +5,32 @@
 <section class="hero">
     <div class="hero-grid">
         <div class="hero-text-content">
+            <div class="live-status-badge">
+                <span class="live-dot"></span>
+                <span>ONLAYN: <strong id="player-count">{{ site_settings.online_players_text }}</strong> O'YINCHI</span>
+            </div>
             <div class="title-wrap">
                 <h1>NovaMc.uz ga xush kelibsiz</h1>
             </div>
-            <p class="subtitle">O'zbekistondagi eng zamonaviy va sifatli Minecraft serveri. Biz bilan birga
-                sarguzashtlarga sho'ng'ing!</p>
+            <p class="subtitle">O'zbekistondagi eng zamonaviy, tezkor va sifatli Minecraft serveri. Biz bilan birga sarguzashtlarga sho'ng'ing va o'z imperiyangizni quring!</p>
+
+            <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 28px;">
+                <a href="#shop-section" class="btn btn-primary" style="padding: 15px 30px; font-size: 15px;">
+                    💎 DONAT SOTIB OLISH
+                </a>
+                <a href="#" class="btn" onclick="showIpModal(event)" style="padding: 15px 26px; font-size: 14px; background: rgba(0, 229, 255, 0.12); color: var(--secondary); border: 1px solid var(--border-diamond); border-radius: 10px; font-weight: 800;">
+                    🎮 Server IP Manzili
+                </a>
+            </div>
 
             <div class="server-ip-box" onclick="copyIP()">
                 <div class="online-status">
                     <div class="dot"></div>
-                    <span id="player-count">{{ site_settings.online_players_text }}</span>
+                    <span>IP Nusxalash</span>
                 </div>
                 <div class="ip-text">{{ site_settings.server_ip }}</div>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted)">
+                    stroke-linecap="round" stroke-linejoin="round" style="color: var(--secondary)">
                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                 </svg>
@@ -36,21 +48,30 @@
     </div>
 </section>
 
-<section class="shop">
-    <div class="tabs">
-        <div class="tab active" style="cursor: default; pointer-events: none;">Anarxiya</div>
+<section class="shop" id="shop-section" style="padding-top: 30px;">
+    <div style="text-align: center; margin-bottom: 32px;">
+        <h2 style="font-family: 'Orbitron', sans-serif; font-size: 34px; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 0 25px rgba(0, 255, 135, 0.4); margin-bottom: 10px;">
+            💎 DONAT VA PRIVILEGIYALAR SOTIB OLISH
+        </h2>
+        <p style="color: var(--text-muted); font-size: 16px; max-width: 640px; margin: 0 auto; line-height: 1.6;">
+            Serverdagi eng kuchli daraja va imtiyozlarga ega bo'ling! Nikingizni yozing va o'zingizga mos donatni tanlang.
+        </p>
+    </div>
+
+    <div class="tabs" id="categoryTabs">
+        <!-- Rendered dynamically by JS -->
     </div>
 
     {% if not site_settings.is_shop_open %}
-    <div style="text-align:center; padding: 20px; margin-bottom: 20px; background: rgba(255,82,82,0.15); border: 1px solid #ff5252; border-radius: 10px; color: #ff5252; font-weight: 600;">
-        Do'kon vaqtincha yopiq. Iltimos keyinroq qayta urinib ko'ring.
+    <div style="text-align:center; padding: 20px; margin-bottom: 20px; background: rgba(255,42,95,0.15); border: 1px solid var(--redstone); border-radius: 12px; color: var(--redstone); font-weight: 800; font-size: 16px;">
+        ⚠️ Do'kon vaqtincha yopiq. Iltimos keyinroq qayta urinib ko'ring.
     </div>
     {% endif %}
 
     <div class="shop-content">
         <!-- Form Section -->
         <div class="buy-card">
-            <div id="formMessage" style="display:none; margin-bottom: 15px; padding: 12px 15px; border-radius: 10px; font-weight: 600;"></div>
+            <div id="formMessage" style="display:none; margin-bottom: 20px; padding: 14px 18px; border-radius: 12px; font-weight: 800;"></div>
 
             <form id="buyForm">
                 {% csrf_token %}
@@ -62,7 +83,7 @@
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
-                        <input type="text" id="playerNick" name="player_nick" placeholder="Nikingizni kiriting" required>
+                        <input type="text" id="playerNick" name="player_nick" placeholder="Nikingizni kiriting (masalan: Steve)" required>
                     </div>
                 </div>
 
@@ -103,7 +124,7 @@
                             <line x1="12" y1="3" x2="12" y2="15"></line>
                         </svg>
                         <input type="file" id="receiptImage" name="receipt_image" accept="image/*" required
-                            style="padding: 12px 15px 12px 45px; cursor: pointer; color: var(--text-muted); background: rgba(0,0,0,0.2);">
+                            style="padding: 14px 16px 14px 48px; cursor: pointer; color: var(--text-muted); background: rgba(0,0,0,0.3);">
                     </div>
                 </div>
 
@@ -112,18 +133,21 @@
                     <label for="agree">Men <a href="{% url 'qoidalar' %}">Foydalanish shartlariga</a> roziman</label>
                 </div>
 
-                <div
-                    style="margin-bottom: 20px; padding: 15px; background: rgba(3, 218, 198, 0.1); border: 1px solid var(--secondary); border-radius: 10px;">
-                    <p style="color: var(--secondary); font-weight: 600; margin-bottom: 5px;">💳 To'lov uchun
-                        Karta:</p>
-                    <p style="font-size: 18px; font-weight: bold; letter-spacing: 2px;">{{ site_settings.payment_card_number }}</p>
-                    {% if site_settings.payment_card_owner %}
-                    <p style="font-size: 13px; color: var(--text-muted); margin-top: 3px;">{{ site_settings.payment_card_owner }}</p>
-                    {% endif %}
+                <div style="margin-bottom: 24px; padding: 18px 20px; background: rgba(0, 255, 135, 0.05); border: 1px solid var(--border-glow); border-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <p style="color: var(--primary); font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">💳 To'lov uchun Karta:</p>
+                        <p style="font-size: 20px; font-weight: 900; letter-spacing: 2.5px; font-family: 'JetBrains Mono', monospace; color: var(--text-main);">{{ site_settings.payment_card_number }}</p>
+                        {% if site_settings.payment_card_owner %}
+                        <p style="font-size: 13px; color: var(--text-muted); margin-top: 3px;">{{ site_settings.payment_card_owner }}</p>
+                        {% endif %}
+                    </div>
+                    <button type="button" onclick="copyCardNumber('{{ site_settings.payment_card_number }}')" class="btn" style="padding: 10px 16px; font-size: 12px; background: rgba(0, 255, 135, 0.15); color: var(--primary); border: 1px solid var(--border); border-radius: 8px;">
+                        📋 Nusxalash
+                    </button>
                 </div>
 
                 <button type="submit" class="btn btn-primary buy-btn" id="buySubmitBtn" {% if not site_settings.is_shop_open %}disabled{% endif %}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="9" cy="21" r="1"></circle>
                         <circle cx="20" cy="21" r="1"></circle>
@@ -151,24 +175,53 @@
     const PRODUCTS = JSON.parse(document.getElementById('products-data').textContent);
     const checkIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
 
+    let selectedCatId = 'all';
+
     function groupByCategory(products) {
+        if (!Array.isArray(products)) return [];
         const groups = {};
         const order = [];
         products.forEach(p => {
-            const key = p.category.id;
-            if (!groups[key]) {
-                groups[key] = { name: p.category.name, items: [] };
-                order.push(key);
+            const catId = (p && p.category && p.category.id) ? p.category.id : 'general';
+            const catName = (p && p.category && p.category.name) ? p.category.name : 'Tovarlar';
+            if (!groups[catId]) {
+                groups[catId] = { id: catId, name: catName, items: [] };
+                order.push(catId);
             }
-            groups[key].items.push(p);
+            groups[catId].items.push(p);
         });
         return order.map(key => groups[key]);
     }
 
+    function renderCategoryTabs() {
+        const tabsBox = document.getElementById('categoryTabs');
+        if (!tabsBox) return;
+        const groups = groupByCategory(PRODUCTS);
+        let html = `<div class="tab ${selectedCatId === 'all' ? 'active' : ''}" onclick="selectCategory('all', this)">⚡ Barcha Tovarlar</div>`;
+        groups.forEach(g => {
+            html += `<div class="tab ${selectedCatId == g.id ? 'active' : ''}" onclick="selectCategory('${g.id}', this)">💎 ${g.name}</div>`;
+        });
+        tabsBox.innerHTML = html;
+    }
+
+    function selectCategory(catId, el) {
+        selectedCatId = catId;
+        document.querySelectorAll('#categoryTabs .tab').forEach(t => t.classList.remove('active'));
+        if (el) el.classList.add('active');
+        buildProductSelect();
+    }
+
     function buildProductSelect() {
         const select = document.getElementById('productSelect');
+        if (!select) return;
         select.innerHTML = '';
-        const groups = groupByCategory(PRODUCTS);
+        
+        let filteredProducts = PRODUCTS;
+        if (selectedCatId !== 'all') {
+            filteredProducts = PRODUCTS.filter(p => p.category && String(p.category.id) === String(selectedCatId));
+        }
+
+        const groups = groupByCategory(filteredProducts);
 
         groups.forEach(group => {
             const optgroup = document.createElement('optgroup');
@@ -183,7 +236,7 @@
             select.appendChild(optgroup);
         });
 
-        if (PRODUCTS.length > 0) {
+        if (select.options.length > 0) {
             updateProductInfo();
         }
     }
@@ -215,18 +268,6 @@
             rows.push(`<li>${checkIcon}<span>${product.name} darajasidagi barcha imtiyozlar va komandalar</span></li>`);
         }
         featureList.innerHTML = rows.join('');
-
-        // Stagger reveal each feature row + price pop
-        if (window.gsap) {
-            gsap.fromTo(featureList.querySelectorAll('li'),
-                { opacity: 0, x: -14 },
-                { opacity: 1, x: 0, duration: 0.4, stagger: 0.06, ease: 'power2.out' }
-            );
-            gsap.fromTo('#productPrice',
-                { scale: 0.85, opacity: 0.4 },
-                { scale: 1, opacity: 1, duration: 0.35, ease: 'back.out(2.2)' }
-            );
-        }
     }
 
     function getCookie(name) {
@@ -304,12 +345,24 @@
         if (btn) btn.classList.add('active');
     }
 
+    function copyCardNumber(card) {
+        if (!card) return;
+        navigator.clipboard.writeText(card).then(() => {
+            if (typeof showToast === 'function') {
+                showToast("💳 Karta raqami nusxalandi!");
+            } else {
+                alert("Karta raqami nusxalandi: " + card);
+            }
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
+        renderCategoryTabs();
         buildProductSelect();
         document.getElementById('buyForm').addEventListener('submit', submitOrder);
 
         if (window.VanillaTilt) {
-            VanillaTilt.init(document.querySelectorAll(".buy-card, .info-card, .server-ip-box"), {
+            VanillaTilt.init(document.querySelectorAll(".server-ip-box"), {
                 max: 5, speed: 400, glare: true, "max-glare": 0.15,
             });
         }

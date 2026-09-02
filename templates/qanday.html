@@ -2,65 +2,21 @@
 
 {% block title %}Qanday sotib olinadi - NovaMc.uz{% endblock %}
 
-{% block extra_css %}
-<style>
-    .guide-container {
-        max-width: 900px;
-        margin: 40px auto;
-        background: var(--bg-card);
-        backdrop-filter: blur(15px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 20px;
-        padding: 40px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    }
-    .step-item {
-        margin-bottom: 30px;
-        display: flex;
-        align-items: flex-start;
-        gap: 20px;
-    }
-    .step-number {
-        background: var(--primary);
-        color: white;
-        font-size: 24px;
-        font-weight: bold;
-        width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        flex-shrink: 0;
-        box-shadow: 0 0 15px var(--primary);
-    }
-    .step-content h3 {
-        color: var(--secondary);
-        font-size: 22px;
-        margin-bottom: 10px;
-        margin-top: 10px;
-    }
-    .step-content p {
-        color: var(--text-muted);
-        font-size: 16px;
-        line-height: 1.6;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
 <div class="subpage-3d-header">
     <div id="subpage-3d-container" class="subpage-3d-container" data-3d-type="guide"></div>
 </div>
 
-<section class="guide-container info-card">
-    <h1 style="text-align: center; margin-bottom: 40px; font-size: 36px; color: var(--secondary);">QANDAY SOTIB OLINADI?</h1>
+<section class="guide-container">
+    <h1 style="text-align: center; margin-bottom: 40px; font-size: 38px; color: var(--secondary); font-family: 'Orbitron', sans-serif; text-shadow: 0 0 30px rgba(0, 229, 255, 0.4);">
+        ⚡ QANDAY SOTIB OLINADI?
+    </h1>
 
     <div class="step-item">
         <div class="step-number">1</div>
         <div class="step-content">
             <h3>Saytning Bosh sahifasiga o'ting</h3>
-            <p>Yuqoridagi menyudan "Bosh sahifa" tugmasini bosing yoki to'g'ridan-to'g'ri saytning do'kon qismiga pastga tushing.</p>
+            <p>Yuqoridagi menyudan "Bosh sahifa" tugmasini bosing yoki to'g'ridan-to'g'ri saytning do'kon qismiga tushing.</p>
         </div>
     </div>
 
@@ -76,7 +32,7 @@
         <div class="step-number">3</div>
         <div class="step-content">
             <h3>Tovarni tanlang</h3>
-            <p>Ro'yxatdan o'zingizga kerakli bo'lgan privilegiyani (rank, token, titul yoki boshqa) tanlang. Tanlaganingizda mahsulot haqidagi batafsil ma'lumot va uning narxi o'ng tomonda ko'rsatiladi.</p>
+            <p>Ro'yxatdan o'zingizga kerakli bo'lgan privilegiyani (rank, token, titul) tanlang. Tanlaganingizda uning batafsil imtiyozlari o'ng tomonda ko'rsatiladi.</p>
         </div>
     </div>
 
@@ -84,7 +40,7 @@
         <div class="step-number">4</div>
         <div class="step-content">
             <h3>To'lovni amalga oshiring</h3>
-            <p>Formada ko'rsatilgan Karta raqamiga ({{ site_settings.payment_card_number }}) belgilangan summani o'tkazing.</p>
+            <p>Formada ko'rsatilgan Karta raqamiga (<strong>{{ site_settings.payment_card_number }}</strong>) belgilangan summani o'tkazing.</p>
         </div>
     </div>
 
@@ -92,7 +48,7 @@
         <div class="step-number">5</div>
         <div class="step-content">
             <h3>Chekni yuklang va jo'nating</h3>
-            <p>To'lovni amalga oshirgach, chek (skrinshot)ni saytdagi "To'lov cheki (skrinshot)" bo'limi orqali yuklang. So'ngra qoidalarga rozi bo'lib, "SOTIB OLISH" tugmasini bosing. Buyurtmangiz darhol admin panelga tushadi va u yerda ko'rib chiqiladi.</p>
+            <p>To'lovni amalga oshirgach, chek skrinshotini yuklang hamda "SOTIB OLISH" tugmasini bosing. Buyurtmangiz darhol admin panelga tushadi va 5-15 daqiqa ichida faollashtiriladi!</p>
         </div>
     </div>
 </section>
@@ -102,8 +58,8 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         if (window.VanillaTilt) {
-            VanillaTilt.init(document.querySelectorAll(".info-card"), {
-                max: 5, speed: 400, glare: true, "max-glare": 0.15,
+            VanillaTilt.init(document.querySelectorAll(".guide-container"), {
+                max: 3, speed: 400, glare: true, "max-glare": 0.1,
             });
         }
     });

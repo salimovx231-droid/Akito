@@ -2,64 +2,28 @@
 
 {% block title %}Qoidalar - NovaMc.uz{% endblock %}
 
-{% block extra_css %}
-<style>
-    .rules-container {
-        max-width: 900px;
-        margin: 40px auto;
-        background: var(--bg-card);
-        backdrop-filter: blur(15px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 20px;
-        padding: 40px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    }
-    .rules-section {
-        margin-bottom: 40px;
-    }
-    .rules-section h2 {
-        color: var(--primary-hover);
-        margin-bottom: 15px;
-        font-size: 24px;
-        border-bottom: 2px solid var(--primary);
-        padding-bottom: 5px;
-        display: inline-block;
-    }
-    .rule-item {
-        margin-bottom: 10px;
-        display: flex;
-        align-items: flex-start;
-        gap: 15px;
-    }
-    .rule-id {
-        color: var(--secondary);
-        font-weight: bold;
-        min-width: 40px;
-    }
-    .rule-text {
-        color: var(--text-main);
-    }
-    .rule-punishment {
-        color: #ff5252;
-        font-weight: 600;
-        display: block;
-        margin-top: 2px;
-        font-size: 14px;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
 <div class="subpage-3d-header">
     <div id="subpage-3d-container" class="subpage-3d-container" data-3d-type="shield"></div>
 </div>
 
-<section class="rules-container info-card">
-    <h1 style="text-align: center; margin-bottom: 40px; font-size: 36px; color: var(--secondary);">SERVER QOIDALARI</h1>
+<section class="rules-container">
+    <h1 style="text-align: center; margin-bottom: 24px; font-size: 38px; color: var(--secondary); font-family: 'Orbitron', sans-serif; text-shadow: 0 0 30px rgba(0, 229, 255, 0.4);">
+        🛡️ SERVER QOIDALARI
+    </h1>
+
+    <!-- Rule Search Bar -->
+    <div style="margin-bottom: 36px;" class="input-wrapper">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="left: 18px;">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="ruleSearchInput" placeholder="Qoidalarni qidirish (masalan: ban, chit, mute, pvp)..." onkeyup="filterRules()" style="padding-left: 52px;">
+    </div>
 
     <!-- 1. ASOSIY QOIDALAR -->
     <div class="rules-section">
-        <h2>1. ASOSIY QOIDALARI</h2>
+        <h2>1. ASOSIY QOIDALAR</h2>
         <div class="rule-item"><span class="rule-id">1.1.</span><div class="rule-text">Barcha o'yinchilar teng huquqli.</div></div>
         <div class="rule-item"><span class="rule-id">1.2.</span><div class="rule-text">Chit, x-ray qat'iyan man etiladi. <span class="rule-punishment">Jazo: 30 kun ban</span></div></div>
         <div class="rule-item"><span class="rule-id">1.3.</span><div class="rule-text">Lag, dupe yoki bug ishlatish. <span class="rule-punishment">Jazo: cheksiz ban</span></div></div>
@@ -92,7 +56,7 @@
         <div class="rule-item"><span class="rule-id">3.3.</span><div class="rule-text">Teleport trap man etilmagan.</div></div>
         <div class="rule-item"><span class="rule-id">3.4.</span><div class="rule-text">Lag keltiruvchi qurilma yasash. <span class="rule-punishment">Jazo: ban</span></div></div>
         <div class="rule-item"><span class="rule-id">3.5.</span><div class="rule-text">Eventlarda tartibni buzish. <span class="rule-punishment">Jazo: ban</span></div></div>
-        <div class="rule-item"><span class="rule-id">3.6.</span><div class="rule-text">Aldab savdo qilish. <span class="rule-punishment">Izoh: Server javobgar emas.</span></div></div>
+        <div class="rule-item"><span class="rule-id">3.6.</span><div class="rule-text">Aldab savdo qilish. <span class="rule-punishment" style="background: rgba(0,229,255,0.1); color: var(--secondary); border-color: var(--border-diamond);">Izoh: Server javobgar emas.</span></div></div>
     </div>
 
     <!-- 5. TEKSHIRUV QOIDALARI -->
@@ -117,4 +81,31 @@
         <div class="rule-item"><span class="rule-id">6.3.</span><div class="rule-text">Donater ham barcha qoidalarga bo'ysunadi.</div></div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function filterRules() {
+        const input = document.getElementById('ruleSearchInput');
+        const filter = input.value.toLowerCase();
+        const items = document.querySelectorAll('.rule-item');
+
+        items.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            if (text.includes(filter)) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.VanillaTilt) {
+            VanillaTilt.init(document.querySelectorAll(".rules-container"), {
+                max: 3, speed: 400, glare: true, "max-glare": 0.1,
+            });
+        }
+    });
+</script>
 {% endblock %}

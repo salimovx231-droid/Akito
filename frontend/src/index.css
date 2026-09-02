@@ -1,8 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
+/* ══════════════════════════════════════════════════════════
+   NOVAMC — Global Base Styles (Minecraft Premium Dark Theme)
+   ══════════════════════════════════════════════════════════ */
 :root {
   --bg-deep:      #060a06;
-  --bg-primary:   #0a0e0a;
+  --bg-primary:   #0a0f0a;
   --bg-secondary: #0f150f;
   --border:       rgba(93,158,48,0.18);
 
@@ -26,7 +29,7 @@
   color-scheme: dark;
 }
 
-/* ── Reset ──────────────────────────────────────────── */
+/* ── Reset ────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; overflow-x: hidden; }
 
@@ -34,10 +37,10 @@ body {
   background: var(--bg-deep);
   overflow-x: hidden;
   min-height: 100vh;
-  /* Pixel grid */
+  /* Subtle pixel grid pattern */
   background-image:
-    linear-gradient(rgba(93,158,48,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(93,158,48,0.03) 1px, transparent 1px);
+    linear-gradient(rgba(93,158,48,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(93,158,48,0.04) 1px, transparent 1px);
   background-size: 32px 32px;
   background-attachment: fixed;
 }
@@ -51,12 +54,13 @@ body {
 }
 
 /* ── Scrollbar ─────────────────────────────────────── */
-::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb {
   background: var(--mc-grass);
   border-radius: 0;
 }
+::-webkit-scrollbar-thumb:hover { background: var(--mc-emerald); }
 
 /* ── Typography ────────────────────────────────────── */
 h1, h2, h3 { color: var(--text-h); line-height: 1.15; }
@@ -64,7 +68,7 @@ p  { margin: 0; }
 a  { text-decoration: none; color: var(--mc-emerald); transition: color 0.2s; }
 
 code {
-  font-family: ui-monospace, Consolas, monospace;
+  font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
   font-size: 13px;
   padding: 2px 8px;
   background: rgba(79,224,255,0.07);
@@ -99,9 +103,9 @@ code {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
 }
-@keyframes portal-spin    { from { transform: rotate(0deg); }   to { transform: rotate(360deg); } }
-@keyframes portal-spin-r  { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
-@keyframes creeper-blink  {
+@keyframes portal-spin   { from { transform: rotate(0deg); }   to { transform: rotate(360deg); } }
+@keyframes portal-spin-r { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+@keyframes creeper-blink {
   0%,88%,100% { opacity: 1; }
   90%,98%     { opacity: 0.25; }
 }
@@ -141,7 +145,6 @@ code {
 /* ── Mobile ────────────────────────────────────────── */
 @media (max-width: 768px) {
   .nav-links { display: none; }
-  .hero-title { font-size: clamp(15px, 5vw, 24px) !important; }
   .section  { padding: 60px 16px !important; }
   .tools-grid, .feat-grid, .demo-grid, .perf-grid { grid-template-columns: 1fr !important; }
   .stats-bar { flex-direction: column; }
