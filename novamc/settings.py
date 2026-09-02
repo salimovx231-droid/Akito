@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-^g=k8299b=t&1*u^3vv!x(bm-cr4r#0$8+r=n*3ur)*vfcvgb^')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = True
 
 # Permitted domains
 ALLOWED_HOSTS = [
@@ -111,7 +111,7 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # WhiteNoise orqali static fayllarni yuklash
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Media files (uploaded receipts) - Oldingi xatolik tuzatildi (`/` qo'shildi)
 MEDIA_URL = '/media/'
