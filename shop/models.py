@@ -71,7 +71,7 @@ class Order(models.Model):
     ]
 
     player_nick = models.CharField(max_length=50, verbose_name="O'yinchi niki")
-    email = models.EmailField(verbose_name="Email manzil")
+    email = models.EmailField(blank=True, null=True, verbose_name="Email manzil")
     product = models.ForeignKey(
         Product,
         on_delete=models.CASCADE,
@@ -131,6 +131,14 @@ class SiteSettings(models.Model):
     is_shop_open = models.BooleanField(
         default=True, verbose_name="Do'kon ochiqmi?",
         help_text="O'chirilsa, saytda xarid formasi vaqtincha yopiladi"
+    )
+    telegram_bot_token = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name="8822514489:AAGH5ZsrMPNe0KdjOZm9pSFdzAkgxs3UUz4",
+        help_text="BotFather'dan olingan token (masalan: 123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11)"
+    )
+    telegram_admin_chat_id = models.CharField(
+        max_length=100, blank=True, null=True, verbose_name="8997272977",
+        help_text="Xaridlarni qabul qiluvchi adminning chat ID si (yoki guruh ID si)"
     )
 
     class Meta:

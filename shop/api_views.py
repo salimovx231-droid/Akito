@@ -4,6 +4,47 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Product, Order, SiteSettings, ChatMessage
 from .serializers import ProductSerializer, OrderSerializer, SiteSettingsSerializer, ChatMessageSerializer
+import requests
+import threading
+
+def send_telegram_notification(order):
+    settings_obj = SiteSettings.load()
+    token = settings_obj.telegram_bot_token
+    chat_id = settings_obj.telegram_admin_chat_id
+
+    if not token or not chat_id:
+        return
+
+    url = f"https://api.telegram.org/bot{token}/sendPhoto"
+    caption = (
+        f"🛒 <b>Yangi buyurtma!</b>\n\n"
+        f"👤 O'yinchi: {order.player_nick}\n"
+        f"📧 Email: {order.email}\n"
+        f"🛍 Tovar: {order.product.name}\n"
+        f"💰 Narxi: {order.product.price:,} UZS\n"
+        f"📅 Vaqt: {order.created_at.strftime('%Y-%m-%d %H:%M')}"
+    )
+
+    try:
+        if order.receipt_image:
+            image_path = order.receipt_image.path
+            with open(image_path, 'rb') as photo:
+                requests.post(
+                    url,
+                    data={'chat_id': chat_id, 'caption': caption, 'parse_mode': 'HTML'},
+                    files={'photo': photo},
+                    timeout=10
+                )
+        else:
+            msg_url = f"https://api.telegram.org/bot{token}/sendMessage"
+            requests.post(
+                msg_url,
+                data={'chat_id': chat_id, 'text': caption, 'parse_mode': 'HTML'},
+                timeout=10
+            )
+    except Exception as e:
+        print(f"Telegram notification error: {e}")
+
 
 
 class ProductListView(generics.ListAPIView):
@@ -33,7 +74,11 @@ class OrderCreateView(generics.CreateAPIView):
             )
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        order = serializer.save()
+        
+        # Telegram xabarini fonda yuboramiz
+        threading.Thread(target=send_telegram_notification, args=(order,)).start()
+        
         return Response(
             {"message": "Buyurtmangiz qabul qilindi! Admin tez orada ko'rib chiqadi va emailingizga xabar beriladi."},
             status=status.HTTP_201_CREATED
