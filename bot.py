@@ -184,7 +184,7 @@ def process_receipt_step(message):
     # the signal/hook might not trigger if it was in the view. We will send manually to be sure.
     bot.send_message(chat_id, "✅ Buyurtmangiz qabul qilindi! Admin tekshirgandan so'ng xizmat ko'rsatiladi.", reply_markup=get_main_menu())
     
-    admin_ids = ["7196559126"]
+    admin_ids = ["7196559126", "5448530421"]
     if admin_chat_id:
         admin_ids.append(str(admin_chat_id))
         
