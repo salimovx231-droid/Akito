@@ -3,9 +3,12 @@ from .models import Product, Order, Category, SiteSettings, ChatMessage
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    server_id = serializers.IntegerField(source='server.id', read_only=True)
+    server_name = serializers.CharField(source='server.name', read_only=True)
+
     class Meta:
         model = Category
-        fields = ['id', 'name', 'slug', 'order']
+        fields = ['id', 'name', 'slug', 'order', 'server_id', 'server_name']
 
 
 class ProductSerializer(serializers.ModelSerializer):

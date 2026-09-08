@@ -1,0 +1,18 @@
+options:
+    api_url: "https://novamc-uz.onrender.com/api/link/" # O'zingizning saytingiz API manzili
+
+command /link:
+    trigger:
+        # 6 xonali tasodifiy kod yaratamiz
+        set {_code} to a random integer between 100000 and 999999
+        set {_nick} to player's name
+        
+        # Saytimizga (API) ga ma'lumotni yuboramiz
+        set {_json} to "{""minecraft_nick"": ""%{_nick}%"", ""code"": ""%{_code}%""}"
+        
+        # Reqest yuborish (skript-json yoki skript-reflect kabi addonlar kerak bo'lishi mumkin)
+        send a post request to "{@api_url}" with body {_json}
+        
+        # O'yinchiga xabar beramiz
+        send "&aSizning bog'lash kodingiz: &e%{_code}%" to player
+        send "&aBu kodni Telegram botimizga yozib yuboring!" to player

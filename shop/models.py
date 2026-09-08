@@ -1,10 +1,32 @@
 from django.db import models
 
+class ServerMode(models.Model):
+    """Serverlar (Anarxiya2, Boxpvp va h.k.)"""
+    name = models.CharField(max_length=100, verbose_name="Server nomi")
+    slug = models.SlugField(unique=True)
+    order = models.IntegerField(default=0, verbose_name="Tartib raqami")
+    is_active = models.BooleanField(default=True, verbose_name="Faolmi?")
+
+    class Meta:
+        verbose_name = "Server"
+        verbose_name_plural = "Serverlar"
+        ordering = ['order']
+
+    def __str__(self):
+        return self.name
+
 
 class Category(models.Model):
     """Tovar guruhlari (Asosiy Ranklar, Ma'muriyat, Boshqa)"""
     name = models.CharField(max_length=100, verbose_name="Guruh nomi")
     slug = models.SlugField(unique=True)
+    server = models.ForeignKey(
+        ServerMode, 
+        on_delete=models.CASCADE, 
+        related_name='categories', 
+        verbose_name="Server",
+        null=True, blank=True
+    )
     order = models.IntegerField(default=0, verbose_name="Tartib raqami")
 
     class Meta:
@@ -133,7 +155,7 @@ class SiteSettings(models.Model):
         help_text="O'chirilsa, saytda xarid formasi vaqtincha yopiladi"
     )
     telegram_bot_token = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="8822514489:AAGH5ZsrMPNe0KdjOZm9pSFdzAkgxs3UUz4",
+        max_length=255, blank=True, null=True, verbose_name="8980335834:AAFNNx5vuxShDk6xrVxtuSw_siinTOw_IE8",
         help_text="BotFather'dan olingan token (masalan: 123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11)"
     )
     telegram_admin_chat_id = models.CharField(
@@ -187,3 +209,29 @@ class ChatMessage(models.Model):
 
     def __str__(self):
         return f"[{self.get_sender_display()}] {self.user_nick}: {self.message[:30]}"
+
+class PlayerAccount(models.Model):
+    """Telegram va Minecraft niki o'rtasidagi bog'liqlikni saqlovchi jadval"""
+    telegram_id = models.CharField(max_length=100, unique=True, verbose_name="Telegram ID")
+    minecraft_nick = models.CharField(max_length=100, unique=True, verbose_name="Minecraft Niki")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Ulangan vaqt")
+
+    class Meta:
+        verbose_name = "Ulangan Akkaunt"
+        verbose_name_plural = "Ulangan Akkauntlar"
+
+    def __str__(self):
+        return f"{self.minecraft_nick} (TG: {self.telegram_id})"
+
+class LinkCode(models.Model):
+    """Minecraftdan yuborilgan vaqtinchalik ulanish kodlari"""
+    minecraft_nick = models.CharField(max_length=100, unique=True, verbose_name="Minecraft Niki")
+    code = models.CharField(max_length=6, verbose_name="Tasdiqlash Kodi")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Yaratilgan vaqt")
+
+    class Meta:
+        verbose_name = "Ulanish Kodi"
+        verbose_name_plural = "Ulanish Kodlari"
+
+    def __str__(self):
+        return f"{self.minecraft_nick} - {self.code}"

@@ -9,7 +9,7 @@ from django.core.files.base import ContentFile
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "novamc.settings")
 django.setup()
 
-from shop.models import Category, Product, Order, SiteSettings
+from shop.models import Category, Product, Order, SiteSettings, PlayerAccount, LinkCode, ServerMode
 
 # Botni sozlash
 settings = SiteSettings.load()
@@ -27,7 +27,8 @@ user_data = {}
 
 def get_main_menu():
     markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    markup.add(KeyboardButton("🛍 Tovarlar"), KeyboardButton("ℹ️ Yordam"))
+    markup.add(KeyboardButton("🛍 Tovarlar"), KeyboardButton("⚙️ Profil"))
+    markup.add(KeyboardButton("ℹ️ Yordam"))
     return markup
 
 @bot.message_handler(commands=['start'])
@@ -49,48 +50,179 @@ def send_help(message):
     )
     bot.reply_to(message, help_text)
 
+@bot.message_handler(func=lambda message: message.text == "⚙️ Profil")
+def show_profile(message):
+    tg_id = str(message.chat.id)
+    
+    # Akkaunt ulanganligini tekshirish
+    player_acc = PlayerAccount.objects.filter(telegram_id=tg_id).first()
+    
+    if not player_acc:
+        bot.send_message(
+            message.chat.id, 
+            "⚠️ <b>Sizning akkauntingiz ulanmagan!</b>\n\n"
+            "Serverga (o'yinga) kiring va chatga <code>/link</code> deb yozing.\n"
+            "Sizga berilgan 6 xonali kodni shu yerga botga yozib yuboring.", 
+            parse_mode="HTML"
+        )
+        return
+
+    markup = InlineKeyboardMarkup(row_width=2)
+    # ℹ️ MA'LUMOT
+    markup.add(InlineKeyboardButton("ℹ️ MA'LUMOT", callback_data="profile_info"))
+    # 🔐 BLOKNI ALMASHTIRISH | 🔐 2FA NI ALMASHTIRISH
+    markup.add(
+        InlineKeyboardButton("🔐 BLOKNI ALMASHTIRISH", callback_data="profile_block"),
+        InlineKeyboardButton("🔐 2FA NI ALMASHTIRISH", callback_data="profile_2fa")
+    )
+    # 🔔 BILDIRISHNOMALARNI ALMASHTIRISH
+    markup.add(InlineKeyboardButton("🔔 BILDIRISHNOMALARNI ALMASHTIRISH", callback_data="profile_notif"))
+    # 🚪 KICK QILISH | 🔄 PAROLNI TIKLASH
+    markup.add(
+        InlineKeyboardButton("🚪 KICK QILISH", callback_data="profile_kick"),
+        InlineKeyboardButton("🔄 PAROLNI TIKLASH", callback_data="profile_password")
+    )
+    # 🔗 IJTIMOIY HISOB
+    markup.add(InlineKeyboardButton("🔗 IJTIMOIY HISOB", callback_data="profile_social"))
+    
+    bot.send_message(
+        message.chat.id, 
+        f"<b>⚙️ Minecraft Profilingiz sozlamalari</b>\n\n"
+        f"👤 Ulangan nik: <code>{player_acc.minecraft_nick}</code>\n\n"
+        f"<i>(Hozircha baza ulanmagan, tugmalar vaqtincha ishlaydi)</i>", 
+        reply_markup=markup, 
+        parse_mode="HTML"
+    )
+
+@bot.message_handler(func=lambda message: len(message.text) == 6 and message.text.isdigit())
+def check_link_code(message):
+    code = message.text
+    tg_id = str(message.chat.id)
+    
+    link_code = LinkCode.objects.filter(code=code).first()
+    
+    if not link_code:
+        bot.send_message(message.chat.id, "❌ Noto'g'ri yoki eskirgan kod kiritdingiz. O'yinda qaytadan /link yozib ko'ring.")
+        return
+        
+    # Agar oldin boshqa akk ulangan bo'lsa o'chiramiz
+    PlayerAccount.objects.filter(telegram_id=tg_id).delete()
+    
+    # Yangi akk ulaymiz
+    PlayerAccount.objects.create(telegram_id=tg_id, minecraft_nick=link_code.minecraft_nick)
+    link_code.delete()  # Kodni ishlatib bo'ldik, o'chiramiz
+    
+    bot.send_message(
+        message.chat.id, 
+        f"✅ <b>Muvaffaqiyatli ulandi!</b>\n\n"
+        f"Sizning Telegram akkauntingiz <b>{link_code.minecraft_nick}</b> niki bilan bog'landi.\n"
+        f"Endi «⚙️ Profil» tugmasi orqali profilingizni boshqarishingiz mumkin.",
+        parse_mode="HTML"
+    )
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith('profile_'))
+def handle_profile_callbacks(call):
+    action = call.data.split('_')[1]
+    
+    responses = {
+        'info': "Sizning ma'lumotlaringiz: (Tez kunda...)",
+        'block': "Blok almashtirish bo'limi (Tez kunda...)",
+        '2fa': "2FA sozlamalari (Tez kunda...)",
+        'notif': "Bildirishnomalar sozlamalari (Tez kunda...)",
+        'kick': "Siz serverdan kick qilindingiz! (Sinov)",
+        'password': "Parolni tiklash bo'limi (Tez kunda...)",
+        'social': "Ijtimoiy tarmoqlarni ulash (Tez kunda...)"
+    }
+    
+    msg = responses.get(action, "Noma'lum buyruq")
+    bot.answer_callback_query(call.id, msg, show_alert=True)
+
 @bot.message_handler(func=lambda message: message.text == "🛍 Tovarlar")
-def show_categories(message):
+def show_servers(message):
     settings = SiteSettings.load()
     if not settings.is_shop_open:
         bot.send_message(message.chat.id, "Kechirasiz, do'kon hozircha vaqtincha yopiq.")
         return
-        
-    categories = Category.objects.all().order_by('order')
-    if not categories.exists():
-        bot.send_message(message.chat.id, "Hozircha hech qanday kategoriya yo'q.")
+
+    servers = ServerMode.objects.filter(is_active=True).order_by('order')
+    if not servers.exists():
+        bot.send_message(message.chat.id, "Hozircha hech qanday server yo'q.")
         return
-        
+
+    markup = InlineKeyboardMarkup(row_width=1)
+    server_icons = ['🔮', '⚔️', '🏹', '🛡️', '🌋']
+    for i, srv in enumerate(servers):
+        icon = server_icons[i] if i < len(server_icons) else '🎮'
+        markup.add(InlineKeyboardButton(f"{icon} {srv.name}", callback_data=f"srv_{srv.id}"))
+
+    bot.send_message(message.chat.id, "🖥️ Qaysi serverni tanlaysiz?", reply_markup=markup)
+
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith('srv_'))
+def show_categories(call):
+    srv_id = call.data.split('_')[1]
+    categories = Category.objects.filter(server_id=srv_id).order_by('order')
+    if not categories.exists():
+        bot.answer_callback_query(call.id, "Bu serverda kategoriyalar yo'q.")
+        return
+
     markup = InlineKeyboardMarkup(row_width=1)
     for cat in categories:
         markup.add(InlineKeyboardButton(cat.name, callback_data=f"cat_{cat.id}"))
-        
-    bot.send_message(message.chat.id, "Kategoriyani tanlang:", reply_markup=markup)
+    markup.add(InlineKeyboardButton("⬅️ Ortga", callback_data="back_to_servers"))
+
+    bot.edit_message_text(
+        "📂 Kategoriyani tanlang:",
+        chat_id=call.message.chat.id,
+        message_id=call.message.message_id,
+        reply_markup=markup
+    )
+
+@bot.callback_query_handler(func=lambda call: call.data == "back_to_servers")
+def back_to_servers(call):
+    servers = ServerMode.objects.filter(is_active=True).order_by('order')
+    markup = InlineKeyboardMarkup(row_width=1)
+    server_icons = ['🔮', '⚔️', '🏹', '🛡️', '🌋']
+    for i, srv in enumerate(servers):
+        icon = server_icons[i] if i < len(server_icons) else '🎮'
+        markup.add(InlineKeyboardButton(f"{icon} {srv.name}", callback_data=f"srv_{srv.id}"))
+    bot.edit_message_text(
+        "🖥️ Qaysi serverni tanlaysiz?",
+        chat_id=call.message.chat.id,
+        message_id=call.message.message_id,
+        reply_markup=markup
+    )
+
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('cat_'))
 def show_products(call):
     cat_id = call.data.split('_')[1]
     products = Product.objects.filter(category_id=cat_id, is_active=True).order_by('-price')
-    
+
     if not products.exists():
         bot.answer_callback_query(call.id, "Bu kategoriyada tovarlar yo'q.")
         return
-        
+
     markup = InlineKeyboardMarkup(row_width=1)
     for prod in products:
         markup.add(InlineKeyboardButton(f"{prod.name} - {prod.price:,} UZS", callback_data=f"prod_{prod.id}"))
-        
-    markup.add(InlineKeyboardButton("⬅️ Ortga", callback_data="back_to_cats"))
-    
-    bot.edit_message_text("Tovarni tanlang:", chat_id=call.message.chat.id, message_id=call.message.message_id, reply_markup=markup)
 
-@bot.callback_query_handler(func=lambda call: call.data == "back_to_cats")
-def back_to_cats(call):
-    categories = Category.objects.all().order_by('order')
-    markup = InlineKeyboardMarkup(row_width=1)
-    for cat in categories:
-        markup.add(InlineKeyboardButton(cat.name, callback_data=f"cat_{cat.id}"))
-    bot.edit_message_text("Kategoriyani tanlang:", chat_id=call.message.chat.id, message_id=call.message.message_id, reply_markup=markup)
+    # Get server id from category to go back
+    try:
+        cat = Category.objects.get(id=cat_id)
+        back_data = f"srv_{cat.server_id}" if cat.server_id else "back_to_servers"
+    except Category.DoesNotExist:
+        back_data = "back_to_servers"
+
+    markup.add(InlineKeyboardButton("⬅️ Ortga", callback_data=back_data))
+
+    bot.edit_message_text(
+        "📦 Tovarni tanlang:",
+        chat_id=call.message.chat.id,
+        message_id=call.message.message_id,
+        reply_markup=markup
+    )
+
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('prod_'))
 def product_detail(call):

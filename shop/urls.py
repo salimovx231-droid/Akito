@@ -15,4 +15,5 @@ urlpatterns = [
     path('api/settings/', api_views.SiteSettingsView.as_view(), name='api-settings'),
     path('api/chat/messages/', api_views.ChatMessageListCreateView.as_view(), name='api-chat-messages'),
     path('api/chat/send/', api_views.ChatMessageListCreateView.as_view(), name='api-chat-send'),
+    path('api/link/', views.api_link_code, name='api-link-code'),
 ]

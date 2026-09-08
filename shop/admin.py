@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.contrib import messages
 from django import forms
-from .models import Category, Product, Order, SiteSettings, ChatMessage
+from .models import Category, Product, Order, SiteSettings, ChatMessage, ServerMode
 
 
 class ChatMessageAdminForm(forms.ModelForm):
@@ -79,23 +79,100 @@ class ChatMessageAdmin(admin.ModelAdmin):
 admin.site.site_header = "NovaMc.uz Admin Panel"
 admin.site.site_title = "NovaMc Admin"
 admin.site.index_title = "Boshqaruv paneli"
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'order', 'product_count')
+@admin.register(ServerMode)
+class ServerModeAdmin(admin.ModelAdmin):
+    list_display = ('colored_name', 'slug', 'order', 'is_active', 'category_count')
     prepopulated_fields = {'slug': ('name',)}
     ordering = ['order']
+    list_editable = ('is_active', 'order')
+
+    # Har bir server uchun rang belgilash
+    SERVER_COLORS = {
+        'anarxiya2': ('#ff4757', '#ff6b81'),  # Qizil - Anarxiya2
+        'boxpvp':    ('#2ed573', '#7bed9f'),  # Yashil - Boxpvp
+    }
+    DEFAULT_COLOR = ('#ffa502', '#ffcc02')   # Sariq - boshqalar
+
+    def _get_colors(self, obj):
+        return self.SERVER_COLORS.get(obj.slug, self.DEFAULT_COLOR)
+
+    def colored_name(self, obj):
+        bg, fg = self._get_colors(obj)
+        icon = '🔮' if obj.slug == 'anarxiya2' else '⚔️' if obj.slug == 'boxpvp' else '🎮'
+        return format_html(
+            '<span style="background: {}; color: #fff; padding: 4px 14px; '
+            'border-radius: 20px; font-weight: 800; font-size: 13px; '
+            'letter-spacing: 0.5px; display: inline-block;">{} {}</span>',
+            bg, icon, obj.name
+        )
+    colored_name.short_description = 'Server nomi'
+    colored_name.admin_order_field = 'name'
+
+    def category_count(self, obj):
+        count = obj.categories.count()
+        return format_html('<b>{}</b> ta kategoriya', count)
+    category_count.short_description = 'Kategoriyalar'
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'colored_server', 'slug', 'order', 'product_count')
+    list_filter = ('server',)
+    prepopulated_fields = {'slug': ('name',)}
+    ordering = ['server__order', 'order']
+
+    SERVER_COLORS = {
+        'anarxiya2': '#ff4757',
+        'boxpvp':    '#2ed573',
+    }
+    DEFAULT_COLOR = '#ffa502'
+
+    def colored_server(self, obj):
+        if not obj.server:
+            return format_html('<span style="color: #aaa;">—</span>')
+        color = self.SERVER_COLORS.get(obj.server.slug, self.DEFAULT_COLOR)
+        icon = '🔮' if obj.server.slug == 'anarxiya2' else '⚔️' if obj.server.slug == 'boxpvp' else '🎮'
+        return format_html(
+            '<span style="background: {}; color: #fff; padding: 3px 10px; '
+            'border-radius: 12px; font-weight: 700; font-size: 12px;">{} {}</span>',
+            color, icon, obj.server.name
+        )
+    colored_server.short_description = 'Server'
+    colored_server.admin_order_field = 'server'
 
     def product_count(self, obj):
-        return obj.products.count()
-    product_count.short_description = "Tovarlar soni"
+        count = obj.products.count()
+        return format_html('<b>{}</b>', count)
+    product_count.short_description = 'Tovarlar'
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'formatted_price', 'is_active')
-    list_filter = ('category', 'is_active')
+    list_display = ('name', 'colored_server_badge', 'category', 'formatted_price', 'is_active')
+    list_filter = ('category__server', 'category', 'is_active')
     search_fields = ('name', 'commands', 'features')
     prepopulated_fields = {'slug': ('name',)}
     list_editable = ('is_active',)
+
+    SERVER_COLORS = {
+        'anarxiya2': '#ff4757',
+        'boxpvp':    '#2ed573',
+    }
+    DEFAULT_COLOR = '#ffa502'
+
+    def colored_server_badge(self, obj):
+        srv = obj.category.server if obj.category else None
+        if not srv:
+            return format_html('<span style="color: #aaa;">—</span>')
+        color = self.SERVER_COLORS.get(srv.slug, self.DEFAULT_COLOR)
+        icon = '🔮' if srv.slug == 'anarxiya2' else '⚔️' if srv.slug == 'boxpvp' else '🎮'
+        return format_html(
+            '<span style="background: {}; color: #fff; padding: 2px 9px; '
+            'border-radius: 10px; font-weight: 700; font-size: 11px;">{} {}</span>',
+            color, icon, srv.name
+        )
+    colored_server_badge.short_description = 'Server'
+    colored_server_badge.admin_order_field = 'category__server'
     fieldsets = (
         ('Asosiy ma\'lumotlar', {
             'fields': ('name', 'slug', 'category', 'price', 'is_active')
@@ -115,10 +192,10 @@ class ProductAdmin(admin.ModelAdmin):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'player_nick', 'product', 'formatted_price',
+        'id', 'player_nick', 'colored_server_badge', 'product', 'formatted_price',
         'colored_status', 'receipt_preview', 'created_at'
     )
-    list_filter = ('status', 'product__category', 'created_at')
+    list_filter = ('product__category__server', 'status', 'product__category', 'created_at')
     search_fields = ('player_nick', 'email', 'product__name')
     readonly_fields = ('created_at', 'updated_at', 'receipt_preview_large')
     date_hierarchy = 'created_at'
@@ -158,6 +235,29 @@ class OrderAdmin(admin.ModelAdmin):
     def formatted_price(self, obj):
         return f"{obj.product.price:,} UZS"
     formatted_price.short_description = "Narxi"
+
+    SERVER_COLORS = {
+        'anarxiya2': '#ff4757',
+        'boxpvp':    '#2ed573',
+    }
+    DEFAULT_SERVER_COLOR = '#ffa502'
+
+    def colored_server_badge(self, obj):
+        try:
+            srv = obj.product.category.server if obj.product and obj.product.category else None
+        except Exception:
+            srv = None
+        if not srv:
+            return format_html('<span style="color: #aaa;">—</span>')
+        color = self.SERVER_COLORS.get(srv.slug, self.DEFAULT_SERVER_COLOR)
+        icon = '🔮' if srv.slug == 'anarxiya2' else '⚔️' if srv.slug == 'boxpvp' else '🎮'
+        return format_html(
+            '<span style="background: {}; color: #fff; padding: 3px 10px; '
+            'border-radius: 12px; font-weight: 700; font-size: 12px;">{} {}</span>',
+            color, icon, srv.name
+        )
+    colored_server_badge.short_description = 'Server'
+    colored_server_badge.admin_order_field = 'product__category__server'
 
     def colored_status(self, obj):
         colors = {

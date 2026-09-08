@@ -54,12 +54,24 @@
             💎 DONAT VA PRIVILEGIYALAR SOTIB OLISH
         </h2>
         <p style="color: var(--text-muted); font-size: 16px; max-width: 640px; margin: 0 auto; line-height: 1.6;">
-            Serverdagi eng kuchli daraja va imtiyozlarga ega bo'ling! Nikingizni yozing va o'zingizga mos donatni tanlang.
+            Serverdagi eng kuchli daraja va imtiyozlarga ega bo'ling! Avval serverni, so'ng kategoriyani tanlang.
         </p>
     </div>
 
-    <div class="tabs" id="categoryTabs">
-        <!-- Rendered dynamically by JS -->
+    <!-- Server Tabs -->
+    <div style="margin-bottom: 12px;">
+        <p style="color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 700;">🖥️ SERVER</p>
+        <div class="tabs" id="serverTabs">
+            <!-- Rendered dynamically by JS -->
+        </div>
+    </div>
+
+    <!-- Category Tabs -->
+    <div>
+        <p style="color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 700;">📂 KATEGORIYA</p>
+        <div class="tabs" id="categoryTabs">
+            <!-- Rendered dynamically by JS -->
+        </div>
     </div>
 
     {% if not site_settings.is_shop_open %}
@@ -171,11 +183,23 @@
 
 {% block extra_js %}
 {{ products_json|json_script:"products-data" }}
+{{ servers_json|json_script:"servers-data" }}
 <script>
     const PRODUCTS = JSON.parse(document.getElementById('products-data').textContent);
+    const SERVERS = JSON.parse(document.getElementById('servers-data').textContent);
     const checkIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
 
+    let selectedServerId = SERVERS.length > 0 ? SERVERS[0].id : 'all';
     let selectedCatId = 'all';
+
+    const SERVER_ICONS = {};
+    const SERVER_ICON_LIST = ['🔮', '⚔️', '🏹', '🛡️', '🌋'];
+    SERVERS.forEach((s, i) => { SERVER_ICONS[s.id] = SERVER_ICON_LIST[i] || '🎮'; });
+
+    function getProductsForServer(serverId) {
+        if (serverId === 'all') return PRODUCTS;
+        return PRODUCTS.filter(p => p.category && String(p.category.server_id) === String(serverId));
+    }
 
     function groupByCategory(products) {
         if (!Array.isArray(products)) return [];
@@ -193,11 +217,33 @@
         return order.map(key => groups[key]);
     }
 
+    function renderServerTabs() {
+        const tabsBox = document.getElementById('serverTabs');
+        if (!tabsBox) return;
+        let html = '';
+        SERVERS.forEach(s => {
+            const icon = SERVER_ICONS[s.id] || '🎮';
+            const active = String(selectedServerId) === String(s.id) ? 'active' : '';
+            html += `<div class="tab ${active}" onclick="selectServer(${s.id}, this)">${icon} ${s.name}</div>`;
+        });
+        tabsBox.innerHTML = html;
+    }
+
+    function selectServer(serverId, el) {
+        selectedServerId = serverId;
+        selectedCatId = 'all';
+        document.querySelectorAll('#serverTabs .tab').forEach(t => t.classList.remove('active'));
+        if (el) el.classList.add('active');
+        renderCategoryTabs();
+        buildProductSelect();
+    }
+
     function renderCategoryTabs() {
         const tabsBox = document.getElementById('categoryTabs');
         if (!tabsBox) return;
-        const groups = groupByCategory(PRODUCTS);
-        let html = `<div class="tab ${selectedCatId === 'all' ? 'active' : ''}" onclick="selectCategory('all', this)">⚡ Barcha Tovarlar</div>`;
+        const serverProducts = getProductsForServer(selectedServerId);
+        const groups = groupByCategory(serverProducts);
+        let html = `<div class="tab ${selectedCatId === 'all' ? 'active' : ''}" onclick="selectCategory('all', this)">⚡ Barchasi</div>`;
         groups.forEach(g => {
             html += `<div class="tab ${selectedCatId == g.id ? 'active' : ''}" onclick="selectCategory('${g.id}', this)">💎 ${g.name}</div>`;
         });
@@ -215,10 +261,10 @@
         const select = document.getElementById('productSelect');
         if (!select) return;
         select.innerHTML = '';
-        
-        let filteredProducts = PRODUCTS;
+
+        let filteredProducts = getProductsForServer(selectedServerId);
         if (selectedCatId !== 'all') {
-            filteredProducts = PRODUCTS.filter(p => p.category && String(p.category.id) === String(selectedCatId));
+            filteredProducts = filteredProducts.filter(p => p.category && String(p.category.id) === String(selectedCatId));
         }
 
         const groups = groupByCategory(filteredProducts);
@@ -238,6 +284,10 @@
 
         if (select.options.length > 0) {
             updateProductInfo();
+        } else {
+            document.getElementById('productName').innerText = 'Tovar topilmadi';
+            document.getElementById('productPrice').innerText = '—';
+            document.getElementById('featureList').innerHTML = '';
         }
     }
 
@@ -357,6 +407,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
+        renderServerTabs();
         renderCategoryTabs();
         buildProductSelect();
         document.getElementById('buyForm').addEventListener('submit', submitOrder);
