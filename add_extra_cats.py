@@ -6,10 +6,21 @@ django.setup()
 
 from shop.models import ServerMode, Category, Product
 
-servers = [
-    ServerMode.objects.get(slug='anarxiya1'),
-    ServerMode.objects.get(slug='boxpvp'),
-]
+# Barcha serverlarni yaratamiz (yo'q bo'lsa yaratiladi, bor bo'lsa o'zgarishsiz qoladi)
+anarxiya1, _ = ServerMode.objects.get_or_create(
+    slug='anarxiya1',
+    defaults={'name': 'Anarxiya1', 'order': 1, 'is_active': True}
+)
+anarxiya2, _ = ServerMode.objects.get_or_create(
+    slug='anarxiya2',
+    defaults={'name': 'Anarxiya2', 'order': 2, 'is_active': True}
+)
+boxpvp, _ = ServerMode.objects.get_or_create(
+    slug='boxpvp',
+    defaults={'name': 'BoxPvP', 'order': 3, 'is_active': True}
+)
+
+servers = [anarxiya1, anarxiya2, boxpvp]
 
 mamuriyat_products = [
     {
