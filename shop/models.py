@@ -155,7 +155,7 @@ class SiteSettings(models.Model):
         help_text="O'chirilsa, saytda xarid formasi vaqtincha yopiladi"
     )
     telegram_bot_token = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="8980335834:AAFNNx5vuxShDk6xrVxtuSw_siinTOw_IE8",
+        max_length=255, blank=True, null=True, verbose_name="8822514489:AAGH5ZsrMPNe0KdjOZm9pSFdzAkgxs3UUz4",
         help_text="BotFather'dan olingan token (masalan: 123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11)"
     )
     telegram_admin_chat_id = models.CharField(
