@@ -5,3 +5,5 @@ gunicorn
 whitenoise
 requests
 pyTelegramBotAPI
+dj-database-url>=2.0
+psycopg2-binary
