@@ -28,7 +28,7 @@ logger = logging.getLogger("novamc_bot")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "novamc.settings")
 django.setup()
 
-from shop.models import Category, Product, Order, SiteSettings  # noqa: E402
+from shop.models import Category, Product, Order, SiteSettings, ServerMode  # noqa: E402
 
 # Botni sozlash — token va admin ID doim bazadan (Sayt sozlamalari) olinadi,
 # shuning uchun ularni hech qachon kodga yozmang.
@@ -86,49 +86,57 @@ def send_help(message):
 
 
 @bot.message_handler(func=lambda message: message.text == "🛍 Tovarlar")
-def show_categories(message):
+def show_servers(message):
     fresh_settings = SiteSettings.load()
     if not fresh_settings.is_shop_open:
         bot.send_message(message.chat.id, "Kechirasiz, do'kon hozircha vaqtincha yopiq.")
         return
 
-    categories = Category.objects.all().order_by('order')
-    if not categories.exists():
-        bot.send_message(message.chat.id, "Hozircha hech qanday kategoriya yo'q.")
+    servers = ServerMode.objects.filter(is_active=True).order_by('order')
+    if not servers.exists():
+        bot.send_message(message.chat.id, "Hozircha hech qanday server yo'q.")
         return
 
     markup = InlineKeyboardMarkup(row_width=1)
-    for cat in categories:
-        markup.add(InlineKeyboardButton(cat.name, callback_data=f"cat_{cat.id}"))
+    for srv in servers:
+        markup.add(InlineKeyboardButton(srv.name, callback_data=f"srv_{srv.id}"))
 
-    bot.send_message(message.chat.id, "Kategoriyani tanlang:", reply_markup=markup)
+    bot.send_message(message.chat.id, "Serverni tanlang:", reply_markup=markup)
 
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('cat_'))
-def show_products(call):
-    cat_id = call.data.split('_')[1]
-    products = Product.objects.filter(category_id=cat_id, is_active=True).order_by('-price')
+@bot.callback_query_handler(func=lambda call: call.data.startswith('srv_'))
+def show_server_products(call):
+    srv_id = call.data.split('_')[1]
+    
+    products = Product.objects.filter(category__server_id=srv_id, is_active=True).order_by('-price')
 
     if not products.exists():
-        bot.answer_callback_query(call.id, "Bu kategoriyada tovarlar yo'q.")
+        bot.answer_callback_query(call.id, "Bu bo'limda tovarlar yo'q.")
         return
 
     markup = InlineKeyboardMarkup(row_width=1)
     for prod in products:
         markup.add(InlineKeyboardButton(f"{prod.name} - {prod.price:,} UZS", callback_data=f"prod_{prod.id}"))
+    
+    markup.add(InlineKeyboardButton("⬅️ Ortga", callback_data="back_to_servers"))
 
-    markup.add(InlineKeyboardButton("⬅️ Ortga", callback_data="back_to_cats"))
+    try:
+        server = ServerMode.objects.get(id=srv_id)
+        text = f"<b>{server.name}</b> bo'limidagi tovarlarni tanlang:"
+    except ServerMode.DoesNotExist:
+        text = "Tovarni tanlang:"
 
-    bot.edit_message_text("Tovarni tanlang:", chat_id=call.message.chat.id, message_id=call.message.message_id, reply_markup=markup)
+    bot.edit_message_text(text, chat_id=call.message.chat.id, message_id=call.message.message_id, reply_markup=markup, parse_mode="HTML")
 
 
-@bot.callback_query_handler(func=lambda call: call.data == "back_to_cats")
-def back_to_cats(call):
-    categories = Category.objects.all().order_by('order')
+@bot.callback_query_handler(func=lambda call: call.data == "back_to_servers")
+def back_to_servers(call):
+    servers = ServerMode.objects.filter(is_active=True).order_by('order')
     markup = InlineKeyboardMarkup(row_width=1)
-    for cat in categories:
-        markup.add(InlineKeyboardButton(cat.name, callback_data=f"cat_{cat.id}"))
-    bot.edit_message_text("Kategoriyani tanlang:", chat_id=call.message.chat.id, message_id=call.message.message_id, reply_markup=markup)
+    for srv in servers:
+        markup.add(InlineKeyboardButton(srv.name, callback_data=f"srv_{srv.id}"))
+    bot.edit_message_text("Serverni tanlang:", chat_id=call.message.chat.id, message_id=call.message.message_id, reply_markup=markup)
+
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('prod_'))
@@ -148,7 +156,11 @@ def product_detail(call):
 
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("🛒 Sotib olish", callback_data=f"buy_{product.id}"))
-    markup.add(InlineKeyboardButton("⬅️ Ortga", callback_data=f"cat_{product.category_id}"))
+    
+    if product.category and product.category.server_id:
+        markup.add(InlineKeyboardButton("⬅️ Ortga", callback_data=f"srv_{product.category.server_id}"))
+    else:
+        markup.add(InlineKeyboardButton("⬅️ Ortga", callback_data="back_to_servers"))
 
     bot.edit_message_text(text, chat_id=call.message.chat.id, message_id=call.message.message_id, reply_markup=markup, parse_mode="HTML")
 

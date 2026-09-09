@@ -73,11 +73,10 @@ WSGI_APPLICATION = 'novamc.wsgi.application'
 
 # Database
 # Railway'da PostgreSQL, lokal kompyuterda SQLite ishlatiladi
-import dj_database_url
-
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
 if DATABASE_URL:
+    import dj_database_url
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
