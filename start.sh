@@ -5,9 +5,8 @@ python manage.py migrate
 # Collect static files
 python manage.py collectstatic --noinput
 
-# Server va Kategoriyalarni bazaga avtomatik qo'shish (faqat yo'q bo'lsa qo'shadi)
-python add_anarxiya1.py
-python add_extra_cats.py
+# Barcha server, kategoriya va mahsulotlarni bazaga avtomatik qo'shish/yangilash
+python seed_all.py
 
 # Start the Telegram bot in the background
 python bot.py &
