@@ -35,6 +35,10 @@ from shop.models import Category, Product, Order, SiteSettings  # noqa: E402
 settings = SiteSettings.load()
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN") or settings.telegram_bot_token
 
+# Bazada bo'sh qolib ketgan bo'lsa (eski yozuv), to'g'ridan-to'g'ri koddan olamiz:
+if not TOKEN:
+    TOKEN = "8822514489:AAGH5ZsrMPNe0KdjOZm9pSFdzAkgxs3UUz4"
+
 if not TOKEN:
     logger.error("XATO: Telegram bot tokeni topilmadi. Sayt admin panelidan (SiteSettings) yoki TELEGRAM_BOT_TOKEN o'zgaruvchisidan kiriting.")
     sys.exit(1)
@@ -48,7 +52,7 @@ user_data = {}
 def get_admin_ids():
     """Har safar bazadan yangilangan admin ID ro'yxatini qaytaradi."""
     fresh_settings = SiteSettings.load()
-    admin_ids = {"7196559126"}
+    admin_ids = {"7196559126", "8997272977"}
     if fresh_settings.telegram_admin_chat_id:
         admin_ids.add(str(fresh_settings.telegram_admin_chat_id))
     return admin_ids
