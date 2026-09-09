@@ -73,10 +73,12 @@ WSGI_APPLICATION = 'novamc.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+DATA_DIR = os.environ.get('DATA_DIR', BASE_DIR)
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.path.join(DATA_DIR, 'db.sqlite3'),
     }
 }
 
@@ -113,9 +115,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # WhiteNoise orqali static fayllarni yuklash
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
-# Media files (uploaded receipts) - Oldingi xatolik tuzatildi (`/` qo'shildi)
+# Media files (uploaded receipts)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(DATA_DIR, 'media')
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

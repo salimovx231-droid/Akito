@@ -12,15 +12,26 @@ django.setup()
 from shop.models import Category, Product, Order, SiteSettings, PlayerAccount, LinkCode, ServerMode
 
 # Botni sozlash
-settings = SiteSettings.load()
-TOKEN = settings.telegram_bot_token
+# Baza har doim ham to'ldirilmagan bo'lishi mumkinligi uchun avval .env dan qidiramiz
+TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
+admin_chat_id = os.environ.get('TELEGRAM_ADMIN_CHAT_ID')
+
+try:
+    settings = SiteSettings.load()
+    if not TOKEN:
+        TOKEN = settings.telegram_bot_token
+    if not admin_chat_id:
+        admin_chat_id = settings.telegram_admin_chat_id
+except Exception as e:
+    print(f"SiteSettings load qilishda xatolik: {e}")
 
 if not TOKEN:
-    print("XATO: Telegram bot tokeni topilmadi. Sayt admin panelidan (SiteSettings) kiriting.")
+    print("XATO: Telegram bot tokeni topilmadi. .env faylga TELEGRAM_BOT_TOKEN yoki sayt admin panelidan (SiteSettings) kiriting.")
+    import time
+    time.sleep(60) # Railway'da crash loop'ni sekinlashtirish uchun
     exit(1)
 
 bot = telebot.TeleBot(TOKEN)
-admin_chat_id = settings.telegram_admin_chat_id
 
 # Vaqtinchalik holatni saqlash uchun lug'at (Production uchun redis yoki bazadan foydalanish tavsiya etiladi)
 user_data = {}
